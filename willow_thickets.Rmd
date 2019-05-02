@@ -79,6 +79,22 @@ sd(store) #standard error (standard deviation of the sampling distribution)
 sd(pop[sam, "willow_count"]) #standard deviation of sample
 
 # [1] 27.1834
+```
 
- 
+
+```{r plot-sam, echo=FALSE, message=FALSE, fig.height=3.5, warning=FALSE}
+
+##Sampling distribution
+sam.dist <- ggplot(data.frame(store), aes(x=store)) + 
+  geom_histogram(color="black", fill="white") +
+  xlab("Mean value of sample") + xlim(c(57,68)) +
+  annotate("text",-Inf,Inf,label="n=130000", hjust = 0, vjust = 1)
+sam.dist
+```
+
+```{r sam-summary}
+mean(store) #expected sample mean
+# [1] 49.97605
+sd(store) #standard error
+# [1] 4.489905
 ```

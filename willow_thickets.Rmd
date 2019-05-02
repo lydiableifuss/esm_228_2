@@ -28,11 +28,11 @@ library(kableExtra)
 #declaring population of willows 
 set.seed(228)
 population <- declare_population(
-  willows = add_level(N=374400, 
+  willows = add_level(N=3744, 
      willow_count=runif(n=N, min=0, max=50))
 )
-pop <- population()
-plot <- ggplot(pop, aes(x=willow_count)) + 
+population <- population()
+plot <- ggplot(population, aes(x=willow_count)) + 
   geom_histogram(color="black", fill="white")
 plot
 ```
@@ -40,20 +40,22 @@ plot
 
 ```{r willow-sample, echo=TRUE, message=F, eval=TRUE}
 #Drawing a sample
-sam <- sample(1:374400,40)
+sam <- sample(1:3744,40)
 plot2 <- ggplot(pop, aes(x=willow_count)) + 
   geom_histogram(color="black", fill="white") +
   geom_histogram(data=pop[sam,], fill = "black")
-
-plot2
 
 ```
 
 
 ```{r mean-compare}
 ## Realizations vs. expectations
-mean(pop$willow_count)
-mean(pop[sam,"willow_count"])
+mean(population$willow_count)
+#[1] 24.94215
+weighted_willow_mean <- mean(population$willow_count)
+
+mean(population[sam,"willow_count"])
+#[1] 25.07221
 ```
 
 
@@ -65,21 +67,21 @@ mean(pop[sam,"willow_count"])
 sims <- 1000
 store <- rep(NA, sims)
 for (i in 1:sims){
-  store[i] <- mean(pop[sample(1:374400,40),"willow_count"])
+  store[i] <- mean(pop[sample(1:3744,40),"willow_count"])
 }
 
 
 mean(store) #expected sample mean
 
-## [1] 24.91931
+## [1] 24.81467
 
 sd(store) #standard error (standard deviation of the sampling distribution)
 
-## [1] 2.280785
+## [1] 2.158915
 
 sd(pop[sam, "willow_count"]) #standard deviation of sample
 
-# [1] 15.53238
+# [1] 14.00425
 ```
 
 
@@ -89,15 +91,15 @@ sd(pop[sam, "willow_count"]) #standard deviation of sample
 sam.dist <- ggplot(data.frame(store), aes(x=store)) + 
   geom_histogram(color="black", fill="white") +
   xlab("Mean value of sample") + xlim(c(0,35)) +
-  annotate("text",-Inf,Inf,label="n=374400", hjust = 0, vjust = 1)
+  annotate("text",-Inf,Inf,label="n=3744", hjust = 0, vjust = 1)
 sam.dist
 ```
 
 ```{r sam-summary}
 mean(store) #expected sample mean
-# [1] 49.97605
+# [1] 24.81467
 sd(store) #standard error
-# [1] 4.489905
+# [1] 2.158915
 ```
 
 
@@ -105,12 +107,40 @@ sd(store) #standard error
 ## Standard deviation vs. standard error
 
 sd(pop[sam,"willow_count"]) #standard deviation of sample
-# [1] 22.11525
+# [1] 14.00425
 
 sd(store) #standard error of sample
-#[1] 4.489905
+#[1] 2.158915
 
 ```
 
-- *Standard deviation* of a sample describes the variance in the data ($\sqrt{\frac{1}{n} \sum_{i=1}^n (y_i - \bar{y})^2}$)
-- *Standard error* of a sample describes the expected sampling variance based on the sampling frame over repeated draws
+
+```{r declare-report}
+
+## DeclareDesign
+
+sampling <- declare_sampling(n=40)
+
+
+my_estimand <- declare_estimands(mean(satisfied),
+                                 label = "willows")
+
+answer <- declare_estimator(satisfied ~ 1,
+                            model = lm_robust,
+                            label = "est.")
+answer <- declare_estimator(
+  handler = tidy_estimator(weighted_willow_mean),
+  estimand = my_estimand)
+```
+
+
+
+```{r diagnosis}
+## DeclareDesign
+design <- population + sampling + 
+  my_estimand + answer
+diagnosis <- diagnose_design(design)
+
+diagnosis$diagnosands_df[,c(40)] %>%
+  kable()
+```

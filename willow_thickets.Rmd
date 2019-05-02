@@ -14,3 +14,71 @@ Riparian buffer is 8.6 acres
 40 samples of 10x10 ft 
 Coversabout 10% of riparian buffer
 
+```{r load, echo=TRUE, message=FALSE}
+library(DeclareDesign)
+library(knitr)
+library(ggplot2)
+library(grid)
+library(gridExtra)
+library(dplyr)
+library(kableExtra)
+```
+
+```{r willow pop, echo=TRUE, message=F, eval=TRUE, cache=TRUE}
+#declaring population of willows 
+set.seed(228)
+population <- declare_population(
+  willows = add_level(N=130000, 
+     willow_count=runif(n=N, min=0, max=100))
+)
+pop <- population()
+plot <- ggplot(pop, aes(x=willow_count)) + 
+  geom_histogram(color="black", fill="white")
+plot
+```
+
+
+```{r willow-sample, echo=TRUE, message=F, eval=TRUE}
+#Drawing a sample
+sam <- sample(1:130000,40)
+plot2 <- ggplot(pop, aes(x=willow_count)) + 
+  geom_histogram(color="black", fill="white") +
+  geom_histogram(data=pop[sam,], fill = "black")
+
+plot2
+```
+
+
+```{r mean-compare}
+## Realizations vs. expectations
+mean(pop$willow_count)
+mean(pop[sam,"willow_count"])
+```
+
+
+```{r sam-dist, cache=TRUE}
+#Sampling distribution:the distribution of sample values with a repeated draw of a given sampling frame.
+
+#Sampling frame: this procedure describing the sample to be drawn.
+
+sims <- 1000
+store <- rep(NA, sims)
+for (i in 1:sims){
+  store[i] <- mean(pop[sample(1:130000,40),"willow_count"])
+}
+
+
+mean(store) #expected sample mean
+
+## [1] 49.97605
+
+sd(store) #standard error (standard deviation of the sampling distribution)
+
+## [1] 4.489905
+
+sd(pop[sam, "willow_count"]) #standard deviation of sample
+
+# [1] 27.1834
+
+ 
+```

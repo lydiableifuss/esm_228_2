@@ -45,3 +45,4 @@ plot2 <- ggplot(pop, aes(x=bug_count)) +
 
 plot2
 ```
+

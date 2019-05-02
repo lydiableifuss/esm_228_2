@@ -28,8 +28,8 @@ library(kableExtra)
 #declaring population of willows 
 set.seed(228)
 population <- declare_population(
-  willows = add_level(N=130000, 
-     willow_count=runif(n=N, min=0, max=100))
+  willows = add_level(N=374400, 
+     willow_count=runif(n=N, min=0, max=50))
 )
 pop <- population()
 plot <- ggplot(pop, aes(x=willow_count)) + 
@@ -40,12 +40,13 @@ plot
 
 ```{r willow-sample, echo=TRUE, message=F, eval=TRUE}
 #Drawing a sample
-sam <- sample(1:130000,40)
+sam <- sample(1:374400,40)
 plot2 <- ggplot(pop, aes(x=willow_count)) + 
   geom_histogram(color="black", fill="white") +
   geom_histogram(data=pop[sam,], fill = "black")
 
 plot2
+
 ```
 
 
@@ -64,21 +65,21 @@ mean(pop[sam,"willow_count"])
 sims <- 1000
 store <- rep(NA, sims)
 for (i in 1:sims){
-  store[i] <- mean(pop[sample(1:130000,40),"willow_count"])
+  store[i] <- mean(pop[sample(1:374400,40),"willow_count"])
 }
 
 
 mean(store) #expected sample mean
 
-## [1] 49.97605
+## [1] 24.91931
 
 sd(store) #standard error (standard deviation of the sampling distribution)
 
-## [1] 4.489905
+## [1] 2.280785
 
 sd(pop[sam, "willow_count"]) #standard deviation of sample
 
-# [1] 27.1834
+# [1] 15.53238
 ```
 
 
@@ -87,8 +88,8 @@ sd(pop[sam, "willow_count"]) #standard deviation of sample
 ##Sampling distribution
 sam.dist <- ggplot(data.frame(store), aes(x=store)) + 
   geom_histogram(color="black", fill="white") +
-  xlab("Mean value of sample") + xlim(c(57,68)) +
-  annotate("text",-Inf,Inf,label="n=130000", hjust = 0, vjust = 1)
+  xlab("Mean value of sample") + xlim(c(0,35)) +
+  annotate("text",-Inf,Inf,label="n=374400", hjust = 0, vjust = 1)
 sam.dist
 ```
 
@@ -98,3 +99,18 @@ mean(store) #expected sample mean
 sd(store) #standard error
 # [1] 4.489905
 ```
+
+
+```{r sd-vs-se}
+## Standard deviation vs. standard error
+
+sd(pop[sam,"willow_count"]) #standard deviation of sample
+# [1] 22.11525
+
+sd(store) #standard error of sample
+#[1] 4.489905
+
+```
+
+- *Standard deviation* of a sample describes the variance in the data ($\sqrt{\frac{1}{n} \sum_{i=1}^n (y_i - \bar{y})^2}$)
+- *Standard error* of a sample describes the expected sampling variance based on the sampling frame over repeated draws

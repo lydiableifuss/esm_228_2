@@ -59,8 +59,4 @@ mean(pop$gw_count)
 mean(pop[sam,"gw_count"])
 ```
 
-```{r}
-git config user.email "ttran@bren.ucsb.edu"
-git config Tiffany Tran
-```
 

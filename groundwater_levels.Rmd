@@ -29,7 +29,7 @@ library(kableExtra)
 #declaring population of groundwater grids 
 set.seed(228)
 population <- declare_population(
-  groundwater_grids = add_level(N=130000, 
+  gw_grids = add_level(N=130000, 
      gw_count=runif(n=N, min=0, max=24))
 )
 
@@ -57,6 +57,45 @@ plot2
 ## Realizations vs. expectations
 mean(pop$gw_count)
 mean(pop[sam,"gw_count"])
+```
+
+```{r declare-pop}
+population <- declare_population(
+  gw_grids = add_level(N=130000, 
+     main=draw_count(N=N, prob = 0.5),
+     satisfied=correlate(given = main, rho = 0.5,
+                         draw_count, prob = 0.5)
+))
+```
+
+
+```{r declare-report}
+#reporting <- declare_assignment(blocks=main,
+                  #assignment_variable = "R",
+                  #block_prob=c(0.2,0.5))
+
+sampling <- declare_sampling(n=40)
+
+my_estimand <- declare_estimands(mean(satisfied),
+                                 label = "Ybar")
+
+answer <- declare_estimator(satisfied ~ 1,
+                            subset = (R==1),
+                            model = lm_robust,
+                            label = "est.")
+
+```
+
+## DeclareDesign()
+
+```{r diagnosis}
+design <- population + reporting + sampling + 
+  my_estimand + answer
+diagnosis <- diagnose_design(design)
+
+diagnosis$diagnosands_df[,c(5,11,13,15)] %>%
+  kable()
+
 ```
 
 

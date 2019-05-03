@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ##Groundwater Levels:
 Medow area is 300 acres or approximately 13,000,000 sq ft
-40 samples of 10x10 ft 
+40 samples of 10x10 ft grids
 Sampled area covers about 20% of meadow area
 
 ```{r load, echo=TRUE, message=FALSE}
@@ -62,9 +62,9 @@ mean(pop[sam,"gw_count"])
 ```{r declare-pop}
 population <- declare_population(
   gw_grids = add_level(N=130000, 
-     main=draw_count(N=N, prob = 0.5),
-     satisfied=correlate(given = main, rho = 0.5,
-                         draw_count, prob = 0.5)
+     main=draw_count(mean=8),
+     inundated=correlate(given = main, rho = 0.5,
+                         draw_count)
 ))
 ```
 
@@ -76,11 +76,10 @@ population <- declare_population(
 
 sampling <- declare_sampling(n=40)
 
-my_estimand <- declare_estimands(mean(satisfied),
+my_estimand <- declare_estimands(mean(inundated),
                                  label = "Ybar")
 
-answer <- declare_estimator(satisfied ~ 1,
-                            subset = (R==1),
+answer <- declare_estimator(inundated ~ 1,
                             model = lm_robust,
                             label = "est.")
 
@@ -89,8 +88,9 @@ answer <- declare_estimator(satisfied ~ 1,
 ## DeclareDesign()
 
 ```{r diagnosis}
-design <- population + reporting + sampling + 
+design <- population + sampling + 
   my_estimand + answer
+
 diagnosis <- diagnose_design(design)
 
 diagnosis$diagnosands_df[,c(5,11,13,15)] %>%

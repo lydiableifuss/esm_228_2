@@ -23,27 +23,27 @@ library(kableExtra)
 
 #declaring population of bug grids
 
-set.seed(228)
-population <- declare_population(
-  pollinator_grids = add_level(N=3250000, 
-     bug_count=runif(n=N, min=0, max=30))
-)
-pop <- population()
-plot <- ggplot(pop, aes(x=bug_count)) + 
-  geom_histogram(color="black", fill="white")
-plot
+#set.seed(228)
+#population <- declare_population(
+  #pollinator_grids = add_level(N=3250000, 
+    # bug_count=runif(n=N, min=0, max=30))
+#)
+#pop <- population()
+#plot <- ggplot(pop, aes(x=bug_count)) + 
+ # geom_histogram(color="black", fill="white")
+#plot
 ```
 
 ```{r bug sample, echo=TRUE, message=F, eval=TRUE}
 
 #Drawing a sample
 
-sam <- sample(1:3250000,40)
-plot2 <- ggplot(pop, aes(x=bug_count)) + 
-  geom_histogram(color="black", fill="white") +
-  geom_histogram(data=pop[sam,], fill = "black")
+#sam <- sample(1:3250000,40)
+#plot2 <- ggplot(pop, aes(x=bug_count)) + 
+ # geom_histogram(color="black", fill="white") +
+  #geom_histogram(data=pop[sam,], fill = "black")
 
-plot2
+#plot2
 ```
 
 ## Conceptual practice: stratification
@@ -57,25 +57,25 @@ plot2
 ```{r declare-pop}
 set.seed(228)
 population <- declare_population(
-  households = add_level(N=500, 
-     main=draw_binary(N=N, prob = 0.5),
-     satisfied=correlate(given = main, rho = 0.5,
-                         draw_binary, prob = 0.5)
+  bug_grids = add_level(N=3250000, 
+     good_habitat=draw_binary(N=N, prob = 0.3),
+     bugs=correlate(given = good_habitat, rho = 0.5,
+                         draw_count, mean = 15)
 ))
 
-my_estimand <- declare_estimands(mean(satisfied),
+my_estimand <- declare_estimands(mean(bugs),
                                  label = "Ybar")
 ```
 
 ## DeclareDesign()
 
 ```{r declare-report}
-reporting <- declare_assignment(blocks=main,
+reporting <- declare_assignment(area=good_habitat,
                   assignment_variable = "R",
-                  block_prob=c(0.2,0.5))
+                  area_prob=c(0.3,0.7))
 
-sampling <- declare_sampling(strata=main,
-                             strata_n=c(175,75))
+sampling <- declare_sampling(strata=good_habitat,
+                             strata_n=c(20,20))
 
 ```
 
@@ -91,8 +91,8 @@ strata_weighted_mean <- function(data){
   stringsAsFactors = FALSE,
   
   estimate = data %>% filter(R==1) %>%
-    group_by(main) %>% 
-    summarise(mean=mean(satisfied)) %>%
+    group_by(good_habitat) %>% 
+    summarise(mean=mean(bugs)) %>%
     mutate(prop=c(0.5,0.5)) %>%
     mutate(sub.mean=mean*prop) %>% pull(sub.mean) %>% 
     sum())
@@ -110,7 +110,7 @@ answer <- declare_estimator(
 
 design <- population + my_estimand + reporting +
           sampling + answer
-diagnosis <- diagnose_design(design, sims = 1000)
+diagnosis <- diagnose_design(design, sims = 500)
 
 diagnosis$diagnosands_df[,c(4,5,12,14)] %>%
   kable()

@@ -377,8 +377,8 @@ my_estimand <- declare_estimands(mean(satisfied),
 answer <- declare_estimator(satisfied ~ 1,
                             subset = (R==1),
                             model = lm_robust,
-                            label = "est.")
-
+                            label = "est.") #simple mean, works without stratification (take out R==1)
+answer
 ```
 
 ## DeclareDesign()

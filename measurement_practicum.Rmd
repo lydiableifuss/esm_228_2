@@ -115,9 +115,9 @@ my_estimand <- declare_estimands(mean(know),
 ```{r report-samp}
 reporting <- declare_assignment(prob=0.8,
                   assignment_variable = "R")
+#not needed, not humans 
 
-sampling <- declare_sampling(strata=port,
-               strata_n=c(80,80,80,80,8,8,8))
+sampling <- declare_sampling(n=40)
 ```
 
 ## DeclareDesign()
@@ -131,7 +131,7 @@ strata_weighted_mean <- function(data){
   n = nrow(data),
   stringsAsFactors = FALSE,
   
-  estimate = data %>% filter(R==1) %>%
+  estimate = data %>% filter(R==1) #not needed took out reported stage %>%
     group_by(port) %>% 
     summarise(mean=mean(know)) %>%
     mutate(prop=pop.vector/sum(pop.vector)) %>%

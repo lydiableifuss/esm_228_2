@@ -28,13 +28,26 @@ library(kableExtra)
 #declaring population of willows 
 set.seed(228)
 population <- declare_population(
-  willows = add_level(N=3744, 
+  willows = add_level(N=3744,
+                      main=draw_count(N=N, prob = 1),
      willow_count=runif(n=N, min=0, max=50))
 )
+
+population
+
 population <- population()
 plot <- ggplot(population, aes(x=willow_count)) + 
   geom_histogram(color="black", fill="white")
 plot
+```
+
+```{r declare-pop}
+population <- declare_population(
+  households = add_level(N=500, 
+     main=draw_count(N=N, prob = 0.5),
+     satisfied=correlate(given = main, rho = 0.5,
+                         draw_binary, prob = 0.5)
+))
 ```
 
 
@@ -52,7 +65,7 @@ plot2 <- ggplot(pop, aes(x=willow_count)) +
 ## Realizations vs. expectations
 mean(population$willow_count)
 #[1] 24.94215
-weighted_willow_mean <- mean(population$willow_count)
+willow_mean <- mean(population$willow_count)
 
 mean(population[sam,"willow_count"])
 #[1] 25.07221
@@ -122,23 +135,21 @@ sd(store) #standard error of sample
 sampling <- declare_sampling(n=40)
 
 
-my_estimand <- declare_estimands(mean(satisfied),
-                                 label = "willows")
+my_estimand <- declare_estimands(mean(willow_mean))
 
-answer <- declare_estimator(satisfied ~ 1,
+
+answer <- declare_estimator(willow_count ~ 1,
                             model = lm_robust,
-                            label = "est.")
-answer <- declare_estimator(
-  handler = tidy_estimator(weighted_willow_mean),
-  estimand = my_estimand)
+                            label = "est.") #simple mean, works without stratification (take out R==1)
+answer
+
 ```
 
 
 
 ```{r diagnosis}
 ## DeclareDesign
-design <- population + sampling + 
-  my_estimand + answer
+design <- population + sampling + my_estimand + answer
 diagnosis <- diagnose_design(design)
 
 diagnosis$diagnosands_df[,c(40)] %>%

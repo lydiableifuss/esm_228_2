@@ -34,11 +34,6 @@ population <- declare_population(
 )
 
 population
-
-#population <- population()
-#plot <- ggplot(population, aes(x=willow_count)) + 
-  #geom_histogram(color="black", fill="white")
-#plot
 ```
 
 
@@ -64,51 +59,6 @@ mean(population[sam,"willow_count"])
 #[1] 25.07221
 ```
 
-
-```{r sam-dist, cache=TRUE}
-#Sampling distribution:the distribution of sample values with a repeated draw of a given sampling frame.
-
-#Sampling frame: this procedure describing the sample to be drawn.
-
-#sims <- 1000
-#store <- rep(NA, sims)
-#for (i in 1:sims){
-  #store[i] <- mean(population[sample(1:3744,40),"willow_count"])
-#}
-
-
-#mean(store) #expected sample mean
-
-## [1] 24.94992
-
-#sd(store) #standard error (standard deviation of the sampling distribution)
-
-## [1] 2.344473
-
-#sd(population[sam, "willow_count"]) #standard deviation of sample
-
-# [1] 14.47128
-```
-
-
-```{r plot-sam, echo=FALSE, message=FALSE, fig.height=3.5, warning=FALSE}
-
-##Sampling distribution
-#sam.dist <- ggplot(data.frame(store), aes(x=store)) + 
-  #geom_histogram(color="black", fill="white") +
-  #xlab("Mean value of sample") + xlim(c(0,35)) +
-  #annotate("text",-Inf,Inf,label="n=3744", hjust = 0, vjust = 1)
-#sam.dist
-```
-
-```{r sam-summary}
-#mean(store) #expected sample mean
-# [1] 24.94992
-#sd(store) #standard error
-# [1] 2.344473
-```
-
-
 ```{r sd-vs-se}
 ## Standard deviation vs. standard error
 
@@ -127,7 +77,6 @@ mean(population[sam,"willow_count"])
 
 my_estimand <- declare_estimands(mean(willow_count),
                                  label = "Ybar")
-
 
 sampling <- declare_sampling(N=40)
 

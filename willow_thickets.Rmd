@@ -52,7 +52,7 @@ sam
 ```{r sd-vs-se}
 ## Standard deviation vs. standard error
 
-#sd(population[sam,"willow_count"]) #standard deviation of sample
+#sd(population[sam,"willow_count"]) 
 # [1] 14.47128
 
 #sd(store) #standard error of sample

@@ -37,7 +37,7 @@ my_estimand <- declare_estimands(mean(bugs),
 ```{r declare-report}
 
 sampling <- declare_sampling(strata=good_habitat,
-                             strata_n=c(20,20))
+                             strata_n=c(40,60))
 
 ```
 

@@ -19,40 +19,6 @@ library(dplyr)
 library(kableExtra)
 ```
 
-```{r bug declare pop, echo=TRUE, message=F, eval=TRUE, cache=TRUE}
-
-#declaring population of bug grids
-
-#set.seed(228)
-#population <- declare_population(
-  #pollinator_grids = add_level(N=3250000, 
-    # bug_count=runif(n=N, min=0, max=30))
-#)
-#pop <- population()
-#plot <- ggplot(pop, aes(x=bug_count)) + 
- # geom_histogram(color="black", fill="white")
-#plot
-```
-
-```{r bug sample, echo=TRUE, message=F, eval=TRUE}
-
-#Drawing a sample
-
-#sam <- sample(1:3250000,40)
-#plot2 <- ggplot(pop, aes(x=bug_count)) + 
- # geom_histogram(color="black", fill="white") +
-  #geom_histogram(data=pop[sam,], fill = "black")
-
-#plot2
-```
-
-## Conceptual practice: stratification
-
-- Describe a monitoring situation where you might want to use stratified sampling
-    + What are the strata?
-    + How would you allocate sampling effort across the strata?
-
-## DeclareDesign()
 
 ```{r declare-pop}
 set.seed(228)
@@ -67,7 +33,6 @@ my_estimand <- declare_estimands(mean(bugs),
                                  label = "Ybar")
 ```
 
-## DeclareDesign()
 
 ```{r declare-report}
 #reporting <- declare_assignment(area=good_habitat,
@@ -79,7 +44,6 @@ sampling <- declare_sampling(strata=good_habitat,
 
 ```
 
-## DeclareDesign()
 
 ```{r declare-estimator}
 
@@ -100,7 +64,6 @@ strata_weighted_mean <- function(data){
 
 ```
 
-## DeclareDesign()
 
 ```{r diagnosis, cache=TRUE}
 
